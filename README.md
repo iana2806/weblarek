@@ -139,11 +139,7 @@ interface IBuyer {
 `IOrder` - описывает данные запроса для отправки заказа на сервер.
 
 ```
-interface IOrder {
-	payment: TPayment;
-	email: string;
-	phone: string;
-	address: string;
+interface IOrder extends IBuyer {
 	total: number;
 	items: string[];
 }
@@ -155,15 +151,6 @@ interface IOrder {
 interface IOrderResponse {
 	id: string;
 	total: number;
-}
-```
-
-`ICartItem` - элемент корзины, содержит товар и его количество.
-
-```
-interface ICartItem {
-	product: IProduct;
-	quantity: number;
 }
 ```
 
@@ -242,7 +229,3 @@ interface ICartItem {
 Методы:
 `getProducts(): Promise<IProduct[]>` - выполняет get-запрос на эндпоинт `/product` и возвращает массив товаров.
 `postOrder(order: IOrder): Promise<IOrderResponse> ` - выполняет post-запрос на эндпоинт `/order` с готовым объектом заказа.
-
-```
-
-```
