@@ -1,4 +1,4 @@
-import { IBuyer, TPayment } from '../../../types';
+import { IBuyer, TPayment } from '../../types';
 
 export class Buyer {
 	private payment: TPayment | null = null;
@@ -6,8 +6,14 @@ export class Buyer {
 	private phone: string = '';
 	private address: string = '';
 
+	constructor() {}
+
 	setPayment(payment: TPayment): void {
 		this.payment = payment;
+	}
+
+	setData(key: keyof IBuyer, value: any) {
+		(this as any)[key] = value;
 	}
 
 	setAddress(address: string): void {

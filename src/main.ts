@@ -1,11 +1,11 @@
 import './scss/styles.scss';
 
-import { Products } from './components/base/Models/Products';
-import { Cart } from './components/base/Models/Cart';
-import { Buyer } from './components/base/Models/Buyer';
+import { Products } from './components/Models/Products';
+import { Cart } from './components/Models/Cart';
+import { Buyer } from './components/Models/Buyer';
 import { apiProducts } from './utils/data';
 import { Api } from './components/base/Api';
-import { ApiService } from './components/base/Models/ApiService';
+import { ApiService } from './components/ApiService';
 import { API_URL } from './utils/constants';
 
 // Проверка работы модели Products

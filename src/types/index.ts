@@ -26,3 +26,22 @@ export interface IBuyer {
 	phone: string;
 	address: string;
 }
+
+export interface IOrder {
+	payment: TPayment;
+	email: string;
+	phone: string;
+	address: string;
+	total: number;
+	items: string[];
+}
+
+export interface IOrderResponse {
+	id: string;
+	total: number;
+}
+
+export interface ICartItem {
+	product: IProduct;
+	quantity: number;
+}

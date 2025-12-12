@@ -136,6 +136,37 @@ interface IBuyer {
 }
 ```
 
+`IOrder` - описывает данные запроса для отправки заказа на сервер.
+
+```
+interface IOrder {
+	payment: TPayment;
+	email: string;
+	phone: string;
+	address: string;
+	total: number;
+	items: string[];
+}
+```
+
+`IOrderResponse` - ответ сервера после оформления заказа.
+
+```
+interface IOrderResponse {
+	id: string;
+	total: number;
+}
+```
+
+`ICartItem` - элемент корзины, содержит товар и его количество.
+
+```
+interface ICartItem {
+	product: IProduct;
+	quantity: number;
+}
+```
+
 ### Модели данных
 
 В приложении используются три модели данных: каталог товаров, корзина и покупатель.
@@ -189,6 +220,7 @@ interface IBuyer {
 
 Методы:
 `setPayment(payment: TPayment): void` - сохраняет способ оплаты.
+`setData(key: keyof IBuyer, value: any): void` — универсальный метод для изменения любого поля покупателя.
 `setAddress(address: string): void` - сохраняет адрес доставки.
 `setEmail(email: string): void` - сохраняет электронную почту.
 `setPhone(phone: string): void` - сохраняет номер телефона.
@@ -209,4 +241,8 @@ interface IBuyer {
 
 Методы:
 `getProducts(): Promise<IProduct[]>` - выполняет get-запрос на эндпоинт `/product` и возвращает массив товаров.
-`postOrder(buyer: IBuyer, items: IProduct[]): Promise<object> ` - выполняет post-запрос на эндпоинт `/order` и передаёт в него данные, полученные в параметрах метода.
+`postOrder(order: IOrder): Promise<IOrderResponse> ` - выполняет post-запрос на эндпоинт `/order` с готовым объектом заказа.
+
+```
+
+```

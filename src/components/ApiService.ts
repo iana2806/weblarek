@@ -1,4 +1,4 @@
-import { IApi, IBuyer, IProduct } from '../../../types';
+import { IApi, IProduct, IOrder, IOrderResponse } from '../types';
 
 export class ApiService {
 	private api: IApi;
@@ -13,9 +13,7 @@ export class ApiService {
 		return data.items;
 	}
 
-	async postOrder(buyer: IBuyer, items: IProduct[]): Promise<object> {
-		const orderData = { buyer, items };
-
-		return this.api.post('/order', orderData);
+	async postOrder(order: IOrder): Promise<IOrderResponse> {
+		return this.api.post('/order', order);
 	}
 }
