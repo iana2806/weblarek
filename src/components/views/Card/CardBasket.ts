@@ -1,6 +1,7 @@
 import { ensureElement } from '../../../utils/utils';
 import { IEvents } from '../../base/Events';
 import { Card } from './Card';
+import { AppEvents } from '../../../utils/constants';
 
 export class CardBasket extends Card {
 	protected indexElement: HTMLElement;
@@ -20,7 +21,9 @@ export class CardBasket extends Card {
 		);
 
 		this.deleteButton.addEventListener('click', () => {
-			this.events.emit('basket:remove', { id: this.container.dataset.id });
+			this.events.emit(AppEvents.BasketRemove, {
+				id: this.container.dataset.id,
+			});
 		});
 	}
 

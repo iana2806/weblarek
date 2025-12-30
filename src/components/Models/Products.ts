@@ -1,4 +1,5 @@
 import { IProduct } from '../../types';
+import { AppEvents } from '../../utils/constants';
 import { IEvents } from '../base/Events';
 
 export class Products {
@@ -9,7 +10,7 @@ export class Products {
 
 	setProducts(products: IProduct[]): void {
 		this.products = products;
-		this.events.emit('products:changed', { products });
+		this.events.emit(AppEvents.ProductsChanged, { products });
 	}
 
 	getProducts(): IProduct[] {

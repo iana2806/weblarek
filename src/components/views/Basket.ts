@@ -1,6 +1,7 @@
 import { ensureElement } from '../../utils/utils';
 import { Component } from '../base/Component';
 import { IEvents } from '../base/Events';
+import { AppEvents } from '../../utils/constants';
 
 interface IBasket {
 	items: HTMLElement[];
@@ -31,7 +32,7 @@ export class Basket extends Component<IBasket> {
 		);
 
 		this.orderButton.addEventListener('click', () => {
-			this.events.emit('order:open');
+			this.events.emit(AppEvents.OrderOpen);
 		});
 	}
 

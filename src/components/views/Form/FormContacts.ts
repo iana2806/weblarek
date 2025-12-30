@@ -1,6 +1,7 @@
 import { ensureElement } from '../../../utils/utils';
 import { IEvents } from '../../base/Events';
 import { Form } from './Form';
+import { AppEvents } from '../../../utils/constants';
 
 export class FormContacts extends Form {
 	protected emailInput: HTMLInputElement;
@@ -20,22 +21,21 @@ export class FormContacts extends Form {
 		);
 
 		this.emailInput.addEventListener('input', () => {
-			this.events.emit('form:changed', {
+			this.events.emit(AppEvents.FormChanged, {
 				field: 'email',
 				value: this.emailInput.value,
 			});
 		});
 
 		this.phoneInput.addEventListener('input', () => {
-			this.events.emit('form:changed', {
+			this.events.emit(AppEvents.FormChanged, {
 				field: 'phone',
 				value: this.phoneInput.value,
 			});
 		});
 
-		this.container.addEventListener('submit', event => {
-			event.preventDefault();
-			this.events.emit('contacts:submit');
+		this.container.addEventListener('submit', () => {
+			this.events.emit(AppEvents.ContactsSubmit);
 		});
 	}
 

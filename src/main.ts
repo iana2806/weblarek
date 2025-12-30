@@ -6,7 +6,7 @@ import { Buyer } from './components/Models/Buyer';
 
 import { Api } from './components/base/Api';
 import { ApiService } from './components/ApiService';
-import { API_URL, CDN_URL } from './utils/constants';
+import { API_URL, CDN_URL, AppEvents } from './utils/constants';
 
 import { EventEmitter } from './components/base/Events';
 import { ensureElement, cloneTemplate } from './utils/utils';
@@ -35,21 +35,50 @@ const buyerModel = new Buyer(events);
 const api = new Api(API_URL);
 const apiService = new ApiService(api);
 
-// Создание представлений
+// Создание шаблонов
+const templateCardCatalog = ensureElement<HTMLTemplateElement>(
+	'#card-catalog',
+	document.body
+);
+const templateCardPreview = ensureElement<HTMLTemplateElement>(
+	'#card-preview',
+	document.body
+);
+const templateCardBasket = ensureElement<HTMLTemplateElement>(
+	'#card-basket',
+	document.body
+);
+const templateBasket = ensureElement<HTMLTemplateElement>(
+	'#basket',
+	document.body
+);
+const templateFormOrder = ensureElement<HTMLTemplateElement>(
+	'#order',
+	document.body
+);
+const templateFormContacts = ensureElement<HTMLTemplateElement>(
+	'#contacts',
+	document.body
+);
+const templateSuccess = ensureElement<HTMLTemplateElement>(
+	'#success',
+	document.body
+);
+
+//Создание контейнеров
 const headerContainer = ensureElement<HTMLElement>('.header', document.body);
-const header = new Header(events, headerContainer);
-
 const galleryContainer = ensureElement<HTMLElement>('.gallery', document.body);
-const gallery = new Gallery(events, galleryContainer);
-
 const modalContainer = ensureElement<HTMLElement>('.modal', document.body);
+
+// Создание представлений
+const header = new Header(events, headerContainer);
+const gallery = new Gallery(events, galleryContainer);
 const modal = new Modal(events, modalContainer);
-
-const formOrderElement = cloneTemplate<HTMLElement>('#order');
-const formOrder = new FormOrder(events, formOrderElement);
-
-const formContactsElement = cloneTemplate<HTMLElement>('#contacts');
-const formContacts = new FormContacts(events, formContactsElement);
+const formOrder = new FormOrder(events, cloneTemplate(templateFormOrder));
+const formContacts = new FormContacts(
+	events,
+	cloneTemplate(templateFormContacts)
+);
 
 // Загрузка товаров с сервера
 async function loadProducts() {
@@ -64,11 +93,11 @@ async function loadProducts() {
 loadProducts();
 
 // Создание каталога карточек
-events.on('products:changed', () => {
+events.on(AppEvents.ProductsChanged, () => {
 	const products = productsModel.getProducts();
 
 	const cards = products.map(product => {
-		const cardElement = cloneTemplate<HTMLElement>('#card-catalog');
+		const cardElement = cloneTemplate<HTMLElement>(templateCardCatalog);
 		cardElement.dataset.id = product.id;
 
 		const cardCatalog = new CardCatalog(events, cardElement);
@@ -84,11 +113,11 @@ events.on('products:changed', () => {
 });
 
 // Открытие карточки товара в модальном окне
-events.on('card:preview', ({ id }: { id: string }) => {
+events.on(AppEvents.CardPreview, ({ id }: { id: string }) => {
 	const product = productsModel.getProductById(id);
 	if (!product) return;
 
-	const previewElement = cloneTemplate<HTMLElement>('#card-preview');
+	const previewElement = cloneTemplate<HTMLElement>(templateCardPreview);
 	previewElement.dataset.id = product.id;
 
 	const cardPreview = new CardPreview(events, previewElement);
@@ -103,7 +132,7 @@ events.on('card:preview', ({ id }: { id: string }) => {
 });
 
 // Добавление товаров в корзину
-events.on('card:add', ({ id }: { id: string }) => {
+events.on(AppEvents.CardAdd, ({ id }: { id: string }) => {
 	const product = productsModel.getProductById(id);
 	if (!product) return;
 
@@ -117,11 +146,11 @@ events.on('card:add', ({ id }: { id: string }) => {
 });
 
 // Изменения в корзине
-events.on('cart:changed', ({ item }: { item?: IProduct }) => {
+events.on(AppEvents.CartChanged, ({ item }: { item?: IProduct }) => {
 	header.counter = cartModel.getCount();
 
 	if (item) {
-		events.emit('cart:item-changed', {
+		events.emit(AppEvents.CartItemChanged, {
 			id: item.id,
 			inCart: cartModel.hasItem(item.id),
 		});
@@ -129,14 +158,14 @@ events.on('cart:changed', ({ item }: { item?: IProduct }) => {
 });
 
 // Открытие корзины
-events.on('basket:open', () => {
-	const basketElement = cloneTemplate<HTMLElement>('#basket');
+events.on(AppEvents.BasketOpen, () => {
+	const basketElement = cloneTemplate(templateBasket);
 
 	const basketItems = cartModel.getItems().map((product, i) => {
-		const cardElement = cloneTemplate<HTMLElement>('#card-basket');
-		cardElement.dataset.id = product.id;
+		const cardBasketElement = cloneTemplate(templateCardBasket);
+		cardBasketElement.dataset.id = product.id;
 
-		const cardBasket = new CardBasket(events, cardElement);
+		const cardBasket = new CardBasket(events, cardBasketElement);
 		cardBasket.index = i + 1;
 		cardBasket.title = product.title;
 		cardBasket.price = product.price;
@@ -159,50 +188,50 @@ events.on('basket:open', () => {
 });
 
 // Удаление товара из корзины
-events.on('basket:remove', ({ id }: { id: string }) => {
+events.on(AppEvents.BasketRemove, ({ id }: { id: string }) => {
 	const product = productsModel.getProductById(id);
 	if (!product) return;
 
 	cartModel.removeItem(product);
 	header.counter = cartModel.getCount();
-	events.emit('basket:open');
+	events.emit(AppEvents.BasketOpen);
 });
 
 // Открытие формы заказа (первый шаг)
-events.on('order:open', () => {
+events.on(AppEvents.OrderOpen, () => {
 	modal.content = formOrder.render();
 	modal.open();
 });
 
 // Выбор способа оплаты
-events.on('order:payment', ({ payment }: { payment: TPayment }) => {
+events.on(AppEvents.OrderPayment, ({ payment }: { payment: TPayment }) => {
 	buyerModel.setPayment(payment);
 });
 
 // Ввод адреса
-events.on('order:address', ({ address }: { address: string }) => {
+events.on(AppEvents.OrderAddress, ({ address }: { address: string }) => {
 	buyerModel.setAddress(address);
 });
 
 // Второй шаг формы заказа
-events.on('order:next', () => {
+events.on(AppEvents.OrderNext, () => {
 	modal.content = formContacts.render();
 	modal.open();
 });
 
 // Ввод email
-events.on('contacts:email', ({ email }: { email: string }) => {
+events.on(AppEvents.ContactsEmail, ({ email }: { email: string }) => {
 	buyerModel.setEmail(email);
 });
 
 // Ввод телефона
-events.on('contacts:phone', ({ phone }: { phone: string }) => {
+events.on(AppEvents.ContactsPhone, ({ phone }: { phone: string }) => {
 	buyerModel.setPhone(phone);
 });
 
 // Изменения в формах заказа
 events.on(
-	'form:changed',
+	AppEvents.FormChanged,
 	(data: { field?: keyof IBuyer; value?: any } = {}) => {
 		const { field, value } = data;
 
@@ -227,7 +256,7 @@ events.on(
 );
 
 // Отправка формы
-events.on('form:submit', () => {
+events.on(AppEvents.FormSubmit, () => {
 	const current = modal.content;
 	const errors = buyerModel.validate();
 
@@ -253,12 +282,12 @@ events.on('form:submit', () => {
 			return;
 		}
 
-		events.emit('contacts:submit');
+		events.emit(AppEvents.ContactsSubmit);
 	}
 });
 
 // Отправка заказа и отображение экрана успеха
-events.on('contacts:submit', async () => {
+events.on(AppEvents.ContactsSubmit, async () => {
 	const orderData = {
 		...buyerModel.getData(),
 		items: cartModel.getItems().map(item => item.id),
@@ -268,7 +297,7 @@ events.on('contacts:submit', async () => {
 	try {
 		await apiService.postOrder(orderData);
 
-		const successElement = cloneTemplate<HTMLElement>('#success');
+		const successElement = cloneTemplate(templateSuccess);
 		const success = new Success(events, successElement);
 
 		success.total = orderData.total;
@@ -284,7 +313,7 @@ events.on('contacts:submit', async () => {
 });
 
 // Изменения данных покупателя и валидация
-events.on('buyer:changed', () => {
+events.on(AppEvents.BuyerChanged, () => {
 	const data = buyerModel.getData();
 
 	const orderErrors = buyerModel.validate();
@@ -323,7 +352,7 @@ events.on('buyer:changed', () => {
 });
 
 // Закрытие модального окна экрана успеха
-events.on('success:close', () => {
+events.on(AppEvents.SuccessClose, () => {
 	header.counter = cartModel.getCount();
 	modal.close();
 });

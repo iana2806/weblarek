@@ -2,6 +2,7 @@ import { ensureAllElements, ensureElement } from '../../../utils/utils';
 import { IEvents } from '../../base/Events';
 import { Form } from './Form';
 import { TPayment } from '../../../types';
+import { AppEvents } from '../../../utils/constants';
 
 export class FormOrder extends Form {
 	protected paymentButtons: HTMLButtonElement[];
@@ -25,20 +26,22 @@ export class FormOrder extends Form {
 				const payment = button.getAttribute('name') as TPayment;
 				if (!payment) return;
 
-				this.events.emit('form:changed', { field: 'payment', value: payment });
+				this.events.emit(AppEvents.FormChanged, {
+					field: 'payment',
+					value: payment,
+				});
 			});
 		});
 
 		this.addressInput.addEventListener('input', () => {
-			this.events.emit('form:changed', {
+			this.events.emit(AppEvents.FormChanged, {
 				field: 'address',
 				value: this.addressInput.value,
 			});
 		});
 
-		this.container.addEventListener('submit', event => {
-			event.preventDefault();
-			this.events.emit('order:next');
+		this.container.addEventListener('submit', () => {
+			this.events.emit(AppEvents.OrderNext);
 		});
 	}
 

@@ -1,25 +1,14 @@
+import { AppEvents } from '../../../utils/constants';
 import { ensureElement } from '../../../utils/utils';
 import { IEvents } from '../../base/Events';
-import { Card } from './Card';
+import { CardProduct } from './CardProduct';
 
-export class CardPreview extends Card {
-	protected categoryElement: HTMLElement;
-	protected imageElement: HTMLImageElement;
+export class CardPreview extends CardProduct {
 	protected descriptionElement: HTMLElement;
 	protected cardButton: HTMLButtonElement;
 
 	constructor(protected events: IEvents, container: HTMLElement) {
 		super(events, container);
-
-		this.categoryElement = ensureElement<HTMLElement>(
-			'.card__category',
-			this.container
-		);
-
-		this.imageElement = ensureElement<HTMLImageElement>(
-			'.card__image',
-			this.container
-		);
 
 		this.descriptionElement = ensureElement<HTMLElement>(
 			'.card__text',
@@ -32,25 +21,16 @@ export class CardPreview extends Card {
 		);
 
 		this.cardButton.addEventListener('click', () => {
-			this.events.emit('card:add', { id: this.container.dataset.id });
+			this.events.emit(AppEvents.CardAdd, { id: this.container.dataset.id });
 		});
 
 		this.events.on(
-			'cart:item-changed',
+			AppEvents.CartItemChanged,
 			({ id, inCart }: { id: string; inCart: boolean }) => {
 				if (this.container.dataset.id !== id) return;
 				this.actionLabel = inCart ? 'Удалить из корзины' : 'Купить';
 			}
 		);
-	}
-
-	set category(value: string) {
-		this.categoryElement.textContent = value;
-	}
-
-	set image({ src, alt }: { src: string; alt?: string }) {
-		this.imageElement.src = src;
-		if (alt) this.imageElement.alt = alt;
 	}
 
 	set description(value: string) {

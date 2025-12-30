@@ -1,5 +1,6 @@
 import { IProduct } from '../../types';
 import { IEvents } from '../base/Events';
+import { AppEvents } from '../../utils/constants';
 
 export class Cart {
 	private items: IProduct[] = [];
@@ -12,17 +13,17 @@ export class Cart {
 
 	addItem(item: IProduct): void {
 		this.items.push(item);
-		this.events.emit('cart:changed', { item });
+		this.events.emit(AppEvents.CartChanged, { item });
 	}
 
 	removeItem(item: IProduct): void {
 		this.items = this.items.filter(i => i.id !== item.id);
-		this.events.emit('cart:changed', { item });
+		this.events.emit(AppEvents.CartChanged, { item });
 	}
 
 	clearCart(): void {
 		this.items = [];
-		this.events.emit('cart:changed', { item: null });
+		this.events.emit(AppEvents.CartChanged, { item: null });
 	}
 
 	getTotal(): number {

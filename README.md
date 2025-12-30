@@ -246,6 +246,10 @@ interface IHeader {
 }
 ```
 
+Конструктор:
+`events: IEvents` - брокер событий приложения.
+`container: HTMLElement` - DOM элемент, внутри которого происходит рендеринг и навешиваются обработчики.
+
 Поля класса:
 `counterElement: HTMLElement` - элемент, который отображает количество товаров в корзине.
 `basketButton: HTMLButtonElement` - кнопка корзины в хедере.
@@ -265,6 +269,10 @@ interface IGallery {
 }
 ```
 
+Конструктор:
+`events: IEvents` - брокер событий приложения.
+`container: HTMLElement` - DOM элемент галереи товаров.
+
 Поля класса:
 `catalogElement: HTMLElement` - элемент, который отображает каталог карточек товаров.
 
@@ -274,6 +282,10 @@ interface IGallery {
 #### Класс Modal
 
 Отвечает за отображение модального окна и его закрытие.
+
+Конструктор:
+`events: IEvents` - брокер событий приложения.
+`container: HTMLElement` - DOM элемент модального окна.
 
 Поля класса:
 `contentElement: HTMLElement` - элемент, куда вставляется содержимое модального окна.
@@ -288,6 +300,10 @@ interface IGallery {
 
 Базовый класс для всех карточек товаров.
 
+Конструктор:
+`events: IEvents` - брокер событий приложения.
+`container: HTMLElement` - DOM элемент карточки товара.
+
 Поля класса:
 `titleElement: HTMLElement` - название товара.
 `priceElement: HTMLElement` - цена товара.
@@ -296,9 +312,14 @@ interface IGallery {
 `set title(value: string)` - устанавливает название товара.
 `set price(value: number | null)` - устанавливает цену товара.
 
-##### Класс CardCatalog
+##### Класс CardProduct
 
-Карточка товара в каталоге на главной странице приложения. Наследует базовый класс Card.
+Отвечает за установку категории и изображения в карточках. Наследует Card.
+Используется как родитель для `CardCatalog` и `CardPreview`.
+
+Конструктор:
+`events: IEvents` - брокер событий приложения.
+`container: HTMLElement` - DOM элемент карточки товара.
 
 Поля класса:
 `categoryElement: HTMLElement` - категория товара.
@@ -306,27 +327,39 @@ interface IGallery {
 
 Методы:
 `set category(value: string)` - устанавливает категорию товара.
-`set image({ src, alt })` - устанавливает изображение товара и альтернативный текст.
+`set image({ src, alt }: { src: string; alt: string })` - устанавливает изображение товара и альтернативный текст.
+
+##### Класс CardCatalog
+
+Карточка товара в каталоге на главной странице приложения. Наследует базовый класс CardProduct.
+
+Конструктор:
+`events: IEvents` - брокер событий приложения.
+`container: HTMLElement` - DOM элемент карточки каталога.
 
 ##### Класс CardPreview
 
-Карточка с подробной информацией о товаре, открывается в модальном окне. Наследует базовый класс Card.
+Карточка с подробной информацией о товаре, открывается в модальном окне. Наследует базовый класс CardProduct.
+
+Конструктор:
+`events: IEvents` - брокер событий приложения.
+`container: HTMLElement` - DOM элемент карточки товара в модальном окне.
 
 Поля класса:
-`categoryElement: HTMLElement` - категория товара.
-`imageElement: HTMLImageElement` - изображение товара.
 `descriptionElement: HTMLElement` - описание товара.
 `cardButton: HTMLButtonElement` - кнопка действия ("Купить" или "Удалить из корзины"); если цена отсутствует, кнопка блокируется и получает текст "Недоступно".
 
 Методы:
-`set category(value: string)` - устанавливает категорию товара.
-`set image({ src, alt })` - устанавливает изображение товара и альтернативный текст.
 `set description(value: string)` - устанавливает текст описания товара.
 `set actionLabel(value: string)` - устанавливает текст кнопки.
 
 ##### Класс CardBasket
 
 Карточка товара в корзине. Наследует базовый класс Card.
+
+Конструктор:
+`events: IEvents` - брокер событий приложения.
+`container: HTMLElement` - DOM элемент карточки товара в корзине.
 
 Поля класса:
 `indexElement: HTMLElement` - порядковый номер товара в корзине.
@@ -348,6 +381,10 @@ interface IForm {
 }
 ```
 
+Конструктор:
+`events: IEvents` - брокер событий приложения.
+`container: HTMLElement` - DOM элемент формы.
+
 Поля класса:
 `submitButton: HTMLButtonElement` - кнопка отправки формы.
 `errorsElement: HTMLElement` - элемент для отображения ошибок.
@@ -362,6 +399,10 @@ interface IForm {
 
 Форма оформления заказа, первый шаг с выбором типа оплаты и указания адреса. Наследует базовый класс Form.
 
+Конструктор:
+`events: IEvents` - брокер событий приложения.
+`container: HTMLElement` - DOM элемент формы оформления заказа (первый шаг).
+
 Поля класса:
 `paymentButtons: HTMLButtonElement[]` - кнопки выбора способа оплаты.
 `addressInput: HTMLInputElement` - поле ввода адреса доставки.
@@ -373,6 +414,10 @@ interface IForm {
 ##### Класс FormContacts
 
 Форма оформления заказа, второй шаг - указывается телефон и email покупателя. Наследует базовый класс Form.
+
+Конструктор:
+`events: IEvents` - брокер событий приложения.
+`container: HTMLElement` - DOM элемент формы оформления заказа (второй шаг).
 
 Поля класса:
 `emailInput: HTMLInputElement` - поле ввода email покупателя.
@@ -394,6 +439,10 @@ interface ISuccess {
 }
 ```
 
+Конструктор:
+`events: IEvents` - брокер событий приложения.
+`container: HTMLElement` - DOM элемент экрана успеха.
+
 Поля класса:
 `totalElement: HTMLElement` - описание итоговой стоимости заказа.
 `successButton: HTMLButtonElement` - кнопка закрытия экрана успеха.
@@ -413,6 +462,10 @@ interface IBasket {
 	total: number;
 }
 ```
+
+Конструктор:
+`events: IEvents` - брокер событий приложения.
+`container: HTMLElement` - DOM элемент корзины.
 
 Поля класса:
 `listElement: HTMLElement` - список товаров в корзине.
@@ -434,7 +487,7 @@ interface IBasket {
 `form:changed` - генерируется при изменениях формы.
 `form:submit` - генерируется при отправке формы.
 
-`modal:close` - клик по иконке закрытия модального окна.
+`modal:close` - клик по иконке закрытия модального окна или оверлею.
 
 `order:open` - клик по кнопке "Оформить" в корзине.
 `order:payment` - клик по кнопке выбора оплаты, передает { payment: TPayment }.

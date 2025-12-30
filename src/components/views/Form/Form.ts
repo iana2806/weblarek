@@ -1,3 +1,4 @@
+import { AppEvents } from '../../../utils/constants';
 import { ensureElement } from '../../../utils/utils';
 import { Component } from '../../base/Component';
 import { IEvents } from '../../base/Events';
@@ -25,12 +26,12 @@ export class Form extends Component<IForm> {
 		);
 
 		this.container.addEventListener('input', () => {
-			this.events.emit('form:changed', { field: null, value: null });
+			this.events.emit(AppEvents.FormChanged, { field: null, value: null });
 		});
 
 		this.container.addEventListener('submit', event => {
 			event.preventDefault();
-			this.events.emit('form:submit');
+			this.events.emit(AppEvents.FormSubmit);
 		});
 	}
 
